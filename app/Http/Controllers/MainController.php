@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\GpsData;
+use Mail;
 
 class MainController extends Controller
 {
@@ -41,6 +42,10 @@ class MainController extends Controller
             'deviceId' => 'required|string',
             'destination' => 'required'
         ]);
+
+        if ($data['destination'] == 'Work') {
+            //$this->sendMail();
+        }
 
         //Saving valid data
         gpsData::saveGpsData($data['deviceId'], $data['coordinates'], $data['destination']);
@@ -102,7 +107,7 @@ class MainController extends Controller
         $items = array();
 
         for ($i=0; $i < count($data) - 1; $i++) { 
-            for ($x=0; $x < count($data); $x++) { 
+            for ($x=1; $x < count($data); $x++) { 
                 if ($i != $x) {
                         $dist = $this->distance(
                         $data[$i]['latitude'], 
@@ -111,10 +116,12 @@ class MainController extends Controller
                         $data[$x]['longtitude'],
                         'K');
                     $items[$data[$i]['deviceId']."-".$data[$x]['deviceId']] = $dist; 
-                } else continue;        
+                } else continue;  
+                $maxDist = max(array_keys($items));
+                $max = $maxDist . ' - ' . $items[$maxDist];     
             }
         }
-        return $items;
+        return $max;
     }
 
     /**
@@ -144,31 +151,14 @@ class MainController extends Controller
         }
     }
 
-    //Function for quick testing
-    public function testApi() 
+    /**
+     * Send email
+     */
+    public function sendMail() 
     {
-        $data = gpsData::all();
-        $items = array();
-        $maxItems = array();
-
-        for ($i=0; $i < count($data) - 1; $i++) { 
-            for ($x=0; $x < count($data); $x++) { 
-                if ($i != $x) {
-                        $dist = $this->distance(
-                        $data[$i]['latitude'], 
-                        $data[$i]['longtitude'],
-                        $data[$x]['latitude'],
-                        $data[$x]['longtitude'],
-                        'K');
-                    $items[$data[$i]['deviceId']."-".$data[$x]['deviceId']] = $dist;
-                    $max = max($items);
-                } else continue;
-                $maxItems[$i] = $max;        
-            }
-        }
-        $dev1 = $data[0]['deviceId'];
-        $dev2 = $data[2]['deviceId'];
-        $result = $dev1.$dev2;
-        dd($maxItems);
+        Mail::send(['message'=>'mail'],['name','yourname'],function($message){
+            $message->to('mail@gmail.com', 'to')->subject('Test Email');
+            $message->from('youremail@gmail.com','name');
+        });
     }
 }

@@ -3,9 +3,9 @@
 @section('content')
 <div class="container mt-3">
 	<div class="row">
-		<div id="adminCard" class="card col-4 mr-5">
+		<div id="devices" class="card col-4 mr-5">
 			<div class="card-body">
-				<p>List of Devices:</p>
+				<h5>List of Devices:</h5>
 				<ul class="list-group">
 					@if (isset($data))
 						@foreach ($data['devices'] as $key => $val)
@@ -21,13 +21,11 @@
 </div>
 <div class="container mt-3">
 	<div class="row">
-		<div id="adminCard" class="card col-4 mr-5">
+		<div id="distance" class="card col-4 mr-5">
 			<div class="card-body">
-				<p>Distance between devices:</p>
+				<h5>Maximum distance between devices:</h4>
 				<ul class="list-group">
-						@foreach ($data['distance'] as $key => $val)
-							<li class="list-group-item">{{$key . ': ' . $val . ' Km'}}</li>
-						@endforeach
+					<li class="list-group-item">{{ $data['distance'] }}</li>
 				</ul>
 			</div>
 		</div>
