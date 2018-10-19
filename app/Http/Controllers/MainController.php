@@ -60,21 +60,23 @@ class MainController extends Controller
     public function adminPageData() 
     {
         $db = gpsData::all();
-        $lastDevice = $db->last();
-        //Nominatim api for converting coordinates to address
-        $nominatim = $this->nominatimRequest($lastDevice['latitude'], $lastDevice['longtitude']);
-        //Distance between devices
-        $distance = $this->deviceDistance();
-        $data = [
-            'latitude' => $lastDevice['latitude'],
-            'longtitude' => $lastDevice['longtitude'],
-            'devices' => $db,
-            'lastDevice' => $lastDevice,
-            'nominatim' => $nominatim,
-            'distance' => $distance
-        ];
 
-        return view('admin')->with('data', $data);
+        if ($db->isNotEmpty()) {
+            $lastDevice = $db->last();
+            //Nominatim api for converting coordinates to address
+            $nominatim = $this->nominatimRequest($lastDevice['latitude'], $lastDevice['longtitude']);
+            //Distance between devices
+            $distance = $this->deviceDistance();
+            $data = [
+                'latitude' => $lastDevice['latitude'],
+                'longtitude' => $lastDevice['longtitude'],
+                'devices' => $db,
+                'lastDevice' => $lastDevice,
+                'nominatim' => $nominatim,
+                'distance' => $distance
+            ];
+            return view('admin')->with('data', $data);
+        } else return view('admin');
     }
 
     /**
@@ -120,8 +122,8 @@ class MainController extends Controller
                 $maxDist = max(array_keys($items));
                 $max = $maxDist . ' - ' . $items[$maxDist];     
             }
+            return $max;
         }
-        return $max;
     }
 
     /**

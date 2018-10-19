@@ -11,6 +11,7 @@
 						@foreach ($data['devices'] as $key => $val)
 							<li class="list-group-item">{{$val['deviceId']}}</li>
 						@endforeach
+					@else <h5>No devices found!</h5>
 					@endif
 				</ul>
 			</div>
@@ -25,19 +26,22 @@
 			<div class="card-body">
 				<h5>Maximum distance between devices:</h4>
 				<ul class="list-group">
-					<li class="list-group-item">{{ $data['distance'] }}</li>
+					@if (isset($data))
+						<li class="list-group-item">{{ $data['distance'] }}</li>
+					@endif
 				</ul>
 			</div>
 		</div>
 	</div>
 </div>
 
+
 <script>
 	function initMap() {
 		// The location of Uluru
 		@if (isset($data))
 			var uluru = {lat: {{ $data['latitude'] }}, lng: {{ $data['longtitude'] }}}
-		@else var uluru = {lat: 11.5073509, lng: 11.127758299}
+		@else var uluru = {lat: 54.6871555, lng: 25.279651400000034}
 		@endif;
 		// The map, centered at Uluru
 		var map = new google.maps.Map(
