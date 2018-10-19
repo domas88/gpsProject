@@ -28,16 +28,11 @@ class MainController extends Controller
         return view('welcome');
     }
 
-    public function showAdminPage() 
-    {
-        $devices = gpsData::all();
-        $distance = $this->deviceDistance();
-
-        return view('admin')
-            ->with('devices', $devices)
-            ->with('distance', $distance);
-    }
-
+    /**
+     * Description
+     * @param Request $request 
+     * @return type
+     */
     public function addDevice(Request $request) 
     {
         //Validation
@@ -50,28 +45,42 @@ class MainController extends Controller
         //Saving valid data
         gpsData::saveGpsData($data['deviceId'], $data['coordinates'], $data['destination']);
 
-        //Separating latitude and longtitude
-        $coordinates = explode(", ", $data['coordinates']);
-        $devices = gpsData::all();
-        $lastDevice = $devices->last();
-        //Nominatim api for converting coordinates to address
-        $nominatim = $this->nominatimRequest($request);
-        //Distance between devices
-        $distance = $this->deviceDistance();
-        
-        return view('admin')
-            ->with('coordinates', $coordinates)
-            ->with('devices', $devices)
-            ->with('nominatim', $nominatim)
-            ->with('lastDevice', $lastDevice)
-            ->with('distance', $distance);
-
+        return redirect()->route('admin');
     }
 
-    public function nominatimRequest($request) 
+    /**
+     * All data needed for admin page. Devices, coordinates, distances, addresses.
+     * @return array
+     */
+    public function adminPageData() 
+    {
+        $db = gpsData::all();
+        $lastDevice = $db->last();
+        //Nominatim api for converting coordinates to address
+        $nominatim = $this->nominatimRequest($lastDevice['latitude'], $lastDevice['longtitude']);
+        //Distance between devices
+        $distance = $this->deviceDistance();
+        $data = [
+            'latitude' => $lastDevice['latitude'],
+            'longtitude' => $lastDevice['longtitude'],
+            'devices' => $db,
+            'lastDevice' => $lastDevice,
+            'nominatim' => $nominatim,
+            'distance' => $distance
+        ];
+
+        return view('admin')->with('data', $data);
+    }
+
+    /**
+     * Nominatim for converting latitude and longtitude in to address
+     * @param int $lat 
+     * @param int $lon 
+     * @return array
+     */
+    public function nominatimRequest($lat, $lon) 
     {   
-        $coordinates = explode(", ", $request['coordinates']);
-        $url = 'https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=' . $coordinates[0] . '&lon=' . $coordinates[1] . '&email=domas.sab@gmail.com';
+        $url = 'https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=' . $lat . '&lon=' . $lon . '&email=domas.sab@gmail.com';
         $json = file_get_contents($url);
         $array = json_decode($json, true);
         $items = array();
@@ -83,6 +92,10 @@ class MainController extends Controller
         return $items;
     }
 
+    /**
+     * Distances between devices
+     * @return array
+     */
     public function deviceDistance() 
     {
         $data = gpsData::all();
@@ -104,9 +117,17 @@ class MainController extends Controller
         return $items;
     }
 
+    /**
+     * Distance calculator
+     * @param type $latitude1 
+     * @param type $longtitude1
+     * @param type $latitude2 
+     * @param type $longtitude2 
+     * @param type $speed metric 
+     * @return float
+     */
     public function distance($lat1, $lon1, $lat2, $lon2, $unit) 
     {
-
         $theta = $lon1 - $lon2;
         $dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) +  cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
         $dist = acos($dist);

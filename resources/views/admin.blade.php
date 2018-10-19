@@ -7,8 +7,8 @@
 			<div class="card-body">
 				<p>List of Devices:</p>
 				<ul class="list-group">
-					@if (isset($devices))
-						@foreach ($devices as $val)
+					@if (isset($data))
+						@foreach ($data['devices'] as $key => $val)
 							<li class="list-group-item">{{$val['deviceId']}}</li>
 						@endforeach
 					@endif
@@ -25,7 +25,7 @@
 			<div class="card-body">
 				<p>Distance between devices:</p>
 				<ul class="list-group">
-						@foreach ($distance as $key => $val)
+						@foreach ($data['distance'] as $key => $val)
 							<li class="list-group-item">{{$key . ': ' . $val . ' Km'}}</li>
 						@endforeach
 				</ul>
@@ -37,21 +37,21 @@
 <script>
 	function initMap() {
 		// The location of Uluru
-		@if (isset($coordinates))
-			var uluru = {lat: {{$coordinates[0]}}, lng: {{$coordinates[1]}}}
+		@if (isset($data))
+			var uluru = {lat: {{ $data['latitude'] }}, lng: {{ $data['longtitude'] }}}
 		@else var uluru = {lat: 11.5073509, lng: 11.127758299}
 		@endif;
 		// The map, centered at Uluru
 		var map = new google.maps.Map(
 		  document.getElementById('map'), {zoom: 12, center: uluru});
 		// The marker, positioned at Uluru
-		@if (isset($nominatim))
+		@if (isset($data['nominatim']))
 			var marker = new google.maps.Marker({
 				position: uluru,
 				map: map
 			});
-			var jsData = <?php echo json_encode($nominatim) ?>;
-			var deviceData = <?php echo json_encode($lastDevice) ?>;
+			var jsData = <?php echo json_encode($data['nominatim']) ?>;
+			var deviceData = <?php echo json_encode($data['lastDevice']) ?>;
 			var infowindow = new google.maps.InfoWindow();
 
 	        marker.addListener('click', function() {

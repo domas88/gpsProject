@@ -17,5 +17,5 @@ Auth::routes();
 
 Route::get('/', 'MainController@index')->name('home');
 Route::post('/admin', 'MainController@addDevice')->name('addDevice');
-Route::get('/admin', 'MainController@showAdminPage')->name('admin');
-Route::get('/test', 'MainController@testApi');
+Route::get('/admin', 'MainController@adminPageData')->name('admin');
+Route::get('/test', 'MainController@adminPageData');
