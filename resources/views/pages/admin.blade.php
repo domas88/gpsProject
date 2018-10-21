@@ -3,13 +3,16 @@
 @section('content')
 <div class="container mt-3">
 	<div class="row">
-		<div id="devices" class="card col-4 mr-5">
+		<div id="devices" class="card col-4 mr-5 mt-5">
 			<div class="card-body">
 				<h5>List of Devices:</h5>
 				<ul class="list-group">
 					@if (isset($data))
 						@foreach ($data['devices'] as $key => $val)
-							<li class="list-group-item">{{$val['deviceId']}}</li>
+							<li class="list-group-item">{{$val['deviceId']}}
+								<a type="button" class="btn btn-danger btn-sm" 
+							role="button" style="float: right" href="{{ url('/admin/' . $val['id']) }}">Delete</a>
+							</li>
 						@endforeach
 					@else <h5>No devices found!</h5>
 					@endif
@@ -27,7 +30,7 @@
 				<h5>Maximum distance between devices:</h4>
 				<ul class="list-group">
 					@if (isset($data))
-						<li class="list-group-item">{{ $data['distance'] }}</li>
+						<li class="list-group-item">{{ $data['distance'] }} Km</li>
 					@endif
 				</ul>
 			</div>

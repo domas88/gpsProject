@@ -19,29 +19,23 @@
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <style>
-      /* Always set the map height explicitly to define the size of the div
-       * element that contains the map. */
-      #map {
+
+        #map {
+        height: 80%;
+        margin-top: 50px;
+        border-radius: 10px;
+        }
+
+        #adminCard {
         height: 80%;
         margin-top: 100px;
         border-radius: 10px;
-      }
+        }
 
-      #adminCard {
-        height: 80%;
+        #form {
         margin-top: 100px;
-        border-radius: 10px;
-      }
+        }
 
-      #form {
-        margin-top: 100px;
-      }
-      /* Optional: Makes the sample page fill the window. */
-/*      html, body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-      }*/
     </style>
 </head>
 <body>

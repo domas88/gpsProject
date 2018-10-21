@@ -26,11 +26,11 @@ class MainController extends Controller
     
     public function index()
     {
-        return view('welcome');
+        return view('pages.welcome');
     }
 
     /**
-     * Description
+     * Validates and saves form inputs to database
      * @param Request $request 
      * @return type
      */
@@ -49,6 +49,13 @@ class MainController extends Controller
 
         //Saving valid data
         gpsData::saveGpsData($data['deviceId'], $data['coordinates'], $data['destination']);
+
+        return redirect()->route('admin');
+    }
+
+    public function deleteDevice($id)
+    {
+        gpsData::destroy($id);
 
         return redirect()->route('admin');
     }
@@ -75,8 +82,8 @@ class MainController extends Controller
                 'nominatim' => $nominatim,
                 'distance' => $distance
             ];
-            return view('admin')->with('data', $data);
-        } else return view('admin');
+            return view('pages.admin')->with('data', $data);
+        } else return view('pages.admin');
     }
 
     /**
